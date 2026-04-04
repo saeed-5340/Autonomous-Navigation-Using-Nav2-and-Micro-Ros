@@ -9,6 +9,8 @@ from std_msgs.msg import Int32MultiArray
 from tf_transformations import quaternion_from_euler
 import tf2_ros
 from geometry_msgs.msg import TransformStamped
+from sensor_msgs.msg import JointState
+from std_msgs.msg import Header
 
 
 wheel_radius = 0.10
@@ -35,7 +37,6 @@ class Dead_Reckoning_Node(Node):
         self.x = 0.0
         self.y = 0.0
         self.theta = 0.0
-        
         self.prev_left_ticks = None
         self.prev_right_ticks = None
         
@@ -44,6 +45,7 @@ class Dead_Reckoning_Node(Node):
         self.odom_publisher = self.create_publisher(Odometry, 'odom', 10)
         self.tf_broadcaster = tf2_ros.TransformBroadcaster(self)
         self.create_subscription(Int32MultiArray, '/get_ticks', self.encoder_callback, 10)
+        self.joint_state_publisher = self.create_publisher(JointState,'/joint_states',10)
         
         self.get_logger().info('Waiting for encoder data...')
         
@@ -54,7 +56,9 @@ class Dead_Reckoning_Node(Node):
             current_left_ticks = msg.data[0]
             current_right_ticks = msg.data[1]
             current_time = self.get_clock().now()
-            
+            self.get_logger().info(
+                f'First encoder message received: left={current_left_ticks}, right={current_right_ticks}'
+            )
             # ── 2. First message: just store baseline, nothing to compute yet ────
             if self.prev_left_ticks is None:
                 self.prev_left_ticks  = current_left_ticks
@@ -90,6 +94,32 @@ class Dead_Reckoning_Node(Node):
                 vb = 0.0
                 omega = 0.0
                 
+             
+             
+                
+            # Publish joint states for visualization
+            
+            left_theta_for_joint_state = (delta_left_ticks / self.ticks_per_revolution) * 2 * math.pi
+            right_theta_for_joint_state = (delta_right_ticks / self.ticks_per_revolution) * 2 * math.pi
+            joint_V_right = (delta_right_distance / dt) * self.wheel_radius
+            joint_V_left = (delta_left_distance / dt) * self.wheel_radius
+            joint_state_msg = JointState()
+            joint_state_msg.header = Header()
+            joint_state_msg.header.stamp = current_time.to_msg()
+            joint_state_msg.header.frame_id = ''
+            
+            joint_state_msg.name = ['left_wheel_joint', 'right_wheel_joint']
+            
+            joint_state_msg.position = [left_theta_for_joint_state, right_theta_for_joint_state]
+            
+            joint_state_msg.velocity = [joint_V_left, joint_V_right]
+            
+            joint_state_msg.effort = []
+            
+            self.joint_state_publisher.publish(joint_state_msg)
+            
+            
+
             # ── 7. Build quaternion from yaw (theta) ─────────────────────────────
             q = quaternion_from_euler(0.0, 0.0, self.theta)
             #   returns [x, y, z, w]

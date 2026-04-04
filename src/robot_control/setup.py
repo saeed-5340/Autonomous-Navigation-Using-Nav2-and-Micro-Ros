@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'dead_reckoning_node = robot_control.dead_reckoning_node:main',
+            'cmd_vel_to_pwm_node = robot_control.cmd_vel_to_pwm_node:main',
         ],
     },
 )
