@@ -1,0 +1,102 @@
+slam_toolbox:
+  ros__parameters:
+
+    # -------------------- ROS & Frame Configuration --------------------
+    # These must match your robot's TF tree and topics.
+    odom_frame: odom                      # Odometry frame (published by diff drive)
+    map_frame: map                         # Fixed world frame for the map
+    base_frame: base_footprint              # Robot base frame (laser is attached relative to this)
+    scan_topic: /scan                  # Laser scan topic (from your lidar)
+
+    # -------------------- Mode and Map Saving --------------------
+    mode: mapping                           # 'mapping' or 'localization'
+    use_map_saver: true                      # Allow saving map via service call
+
+    # -------------------- Solver (Usually Leave Default) --------------------
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: None
+
+
+
+    # -------------------- Simulation Time --------------------
+    # Since you are using Gazebo, all nodes must use simulation time.
+    use_sim_time: true
+
+
+
+    # -------------------- General SLAM Parameters --------------------
+    debug_logging: false                     # Disable verbose debug output
+    throttle_scans: 1                         # Process every scan (1 = no throttling)
+    transform_publish_period: 0.02             # Publish map→odom transform every 20ms (50 Hz)
+    map_update_interval: 5.0                   # Update and publish map every 5 seconds
+    resolution: 0.05                            # Map cell size: 5 cm (good for indoor)
+    min_laser_range: 0.12                       # Your lidar's minimum range (from URDF)
+    max_laser_range: 10.0                        # Your lidar's maximum range (from URDF)
+    minimum_time_interval: 0.5                   # Min time between adding new nodes
+    transform_timeout: 0.2                        # Timeout for TF lookups
+    tf_buffer_duration: 30.0                      # Buffer TF data for 30 seconds
+    stack_size_to_use: 40000000                   # Stack size for large maps (40 MB)
+    enable_interactive_mode: true                  # Allow manual loop closure in RViz
+
+
+
+    # -------------------- Scan Matching --------------------
+    use_scan_matching: true
+    use_scan_barycenter: true
+    minimum_travel_distance: 0.5                # Min linear movement to add new node (meters)
+    minimum_travel_heading: 0.5                  # Min rotational movement to add new node (radians)
+    scan_buffer_size: 10                          # Number of recent scans to keep
+    scan_buffer_maximum_scan_distance: 10.0       # Max distance to consider scans for matching
+    link_match_minimum_response_fine: 0.1         # Threshold for fine matching
+    link_scan_maximum_distance: 1.5                # Max distance for linking scans
+
+
+
+    # -------------------- Loop Closure --------------------
+    do_loop_closing: true                          # Enable loop closure (essential to correct drift)
+    loop_match_minimum_chain_size: 10              # Min poses in chain to attempt loop closure
+    loop_match_maximum_variance_coarse: 3.0        # Tolerance for coarse matching
+    loop_match_minimum_response_coarse: 0.35       # Coarse match threshold (lower = more aggressive)
+    loop_match_minimum_response_fine: 0.4         # Fine match threshold
+    loop_search_maximum_distance: 10.0              # How far to search for loops (meters)
+
+
+
+    # -------------------- Correlation Search (Local) --------------------
+    correlation_search_space_dimension: 1.5       # Local search window size (meters)
+    correlation_search_space_resolution: 0.01      # Resolution within window
+    correlation_search_space_smear_deviation: 0.1  # Smoothing factor
+
+
+
+    # -------------------- Loop Search (Global) --------------------
+    loop_search_space_dimension: 10.0               # Global search window for loop closure (meters)
+    loop_search_space_resolution: 0.05             # Resolution for global search
+    loop_search_space_smear_deviation: 0.03        # Smoothing for global search
+
+
+
+    # -------------------- Scan Matcher Penalties --------------------
+    distance_variance_penalty: 0.7                 # Weight for odometry distance
+    angle_variance_penalty: 1.5                   # Weight for odometry angle
+
+
+
+    # -------------------- Angular Search Offsets --------------------
+    fine_search_angle_offset: 0.00349               # ~0.2 degrees
+    coarse_search_angle_offset: 0.349                # ~20 degrees
+    coarse_angle_resolution: 0.0349                  # ~2 degrees
+    minimum_angle_penalty: 0.9
+    minimum_distance_penalty: 0.5
+    use_response_expansion: true
+    min_pass_through: 2
+    occupancy_threshold: 0.1
+
+    # -------------------- Map Saving Parameters --------------------
+    map_saver_plugin: map_saver_plugins::PGMWriter
+    map_saver_filename: my_map.pgm
+    map_saver_metadata_filename: my_map.yaml
