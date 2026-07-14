@@ -10,7 +10,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclpy REQUIRED)
 
 install(
-  DIRECTORY urdf launch config world rviz
+  DIRECTORY urdf world
   DESTINATION share/${PROJECT_NAME}/
 )
 

@@ -4,6 +4,11 @@
   gz_type_name: "gz.msgs.Clock"
   direction: GZ_TO_ROS
 
+# SIMULATION BRIDGE NOTE:
+# This file is only for Gazebo. It converts Gazebo topics to ROS 2 topics.
+# A real RPLIDAR C1 does not use this bridge; it needs rplidar_ros publishing
+# sensor_msgs/msg/LaserScan directly on /scan.
+
 - ros_topic_name: "/joint_states"
   gz_topic_name: "/world/maze/model/my_car/joint_state"
   ros_type_name: "sensor_msgs/msg/JointState"

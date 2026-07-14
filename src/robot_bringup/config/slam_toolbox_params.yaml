@@ -1,12 +1,25 @@
 slam_toolbox:
   ros__parameters:
 
+    # SIMULATION PARAMS NOTE:
+    # This file is for Gazebo/simulation because use_sim_time is true below.
+    # For the real robot, create/use a separate SLAM params file with
+    # use_sim_time false, the same odom/map/base frames, and scan_topic /scan.
+    # The real LiDAR scan frame must also exist in TF.
+
     # -------------------- ROS & Frame Configuration --------------------
     # These must match your robot's TF tree and topics.
     odom_frame: odom                      # Odometry frame (published by diff drive)
     map_frame: map                         # Fixed world frame for the map
     base_frame: base_footprint              # Robot base frame (laser is attached relative to this)
     scan_topic: /scan                  # Laser scan topic (from your lidar)
+    # REAL ROBOT CODE TO CHANGE:
+    # Keep these same names for real mapping if your TF tree is:
+    # map -> odom -> base_footprint -> base_link -> lidar_link -> laser
+    # odom_frame: odom
+    # map_frame: map
+    # base_frame: base_footprint
+    # scan_topic: /scan
 
     # -------------------- Mode and Map Saving --------------------
     mode: mapping                           # 'mapping' or 'localization'
@@ -24,7 +37,13 @@ slam_toolbox:
 
     # -------------------- Simulation Time --------------------
     # Since you are using Gazebo, all nodes must use simulation time.
-    use_sim_time: true
+    # use_sim_time: true
+    # REAL ROBOT CODE TO CHANGE:
+    use_sim_time: false
+    #
+    # Rule:
+    # - Gazebo/simulation: use_sim_time true
+    # - Real robot hardware: use_sim_time false
 
 
 
