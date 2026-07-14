@@ -12,9 +12,17 @@ def generate_launch_description():
     package_path = get_package_share_path('robot_description')
     
     urdf_path = os.path.join(package_path, 'urdf', 'my_car.urdf.xacro')
-    rviz_config_path = os.path.join(package_path, 'rviz', 'urdf_config.rviz')
+    rviz_config_path = os.path.join(get_package_share_path('robot_bringup'), 'rviz', 'urdf_config.rviz')
     world_path = os.path.join(package_path,'world','maze.sdf')
-    bridge_config_path = os.path.join(package_path,'config','gz_bridge.yaml')
+    bridge_config_path = os.path.join(get_package_share_path('robot_bringup'),'config','gz_bridge.yaml')
+    # SIMULATION MAPPING CODE TO ADD:
+    # slam_params_path = os.path.join(package_path, 'config', 'slam_toolbox_params.yaml')
+    
+    # SIMULATION MAPPING NOTE:
+    # Gazebo launch files should use simulation time and the Gazebo bridge.
+    # Add slam_toolbox here only for simulated mapping, using the simulation
+    # SLAM params in config/slam_toolbox_params.yaml where use_sim_time is true.
+    # Do not launch the real RPLIDAR driver from this file.
     
     
     robot_description = ParameterValue(Command(['xacro ', urdf_path]), value_type=str)
@@ -72,6 +80,24 @@ def generate_launch_description():
             'use_sim_time': True
         }]
     )
+
+    # SIMULATION MAPPING CODE TO ADD:
+    # This is only for Gazebo mapping. It uses Gazebo /clock, simulated /scan,
+    # and the Gazebo bridge from config/gz_bridge.yaml.
+    #
+    # slam_toolbox_node = Node(
+    #     package='slam_toolbox',
+    #     executable='async_slam_toolbox_node',
+    #     name='slam_toolbox',
+    #     output='screen',
+    #     parameters=[
+    #         slam_params_path,
+    #         {
+    #             'use_sim_time': True,
+    #             'scan_topic': '/scan',
+    #         },
+    #     ],
+    # )
     
     return LaunchDescription([
         gz_launch_path,
@@ -80,4 +106,6 @@ def generate_launch_description():
         # joint_state_publisher_node,
         gazebo_bridge_node,
         # rviz_node,
+        # SIMULATION MAPPING CODE TO ADD:
+        # slam_toolbox_node,
     ])

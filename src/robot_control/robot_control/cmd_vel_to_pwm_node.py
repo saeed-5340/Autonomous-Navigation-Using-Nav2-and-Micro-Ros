@@ -10,8 +10,8 @@ import math
 wheel_separation = 0.425  # meter
 max_linear_speed = 0.5      # m/s
 max_angular_speed = 2.0     # rad/s
-max_pwm = 90            # max PWM value for motor control
-min_pwm = 60             # min PWM value for motor control
+max_pwm = 80          # max PWM value for motor control
+min_pwm = 20             # min PWM value for motor control
 
 class Cmd_Vel_To_PWM_Node(Node):
     def __init__(self):

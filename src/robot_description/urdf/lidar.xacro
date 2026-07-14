@@ -27,9 +27,19 @@
         <origin xyz = "0 0 ${base_height + length / 2.0}" rpy = "0 0 0"/>
     </joint>
 
+    <!-- REAL ROBOT FRAME NOTE:
+         This URDF says the physical LiDAR is mounted at frame "lidar_link".
+         Your RPLIDAR C1 driver published /scan with header.frame_id "laser".
+         SLAM needs a TF path from base_footprint/base_link to the scan frame,
+         so either configure the driver frame_id to "lidar_link" or publish a
+         static transform from lidar_link to laser in the real robot launch. -->
 
 
     <gazebo reference="lidar_link">
+        <!-- SIMULATION NOTE:
+             This Gazebo sensor is only for simulated LiDAR data. It is not the
+             real RPLIDAR C1 driver. Real hardware should be started with
+             rplidar_ros, which publishes /scan directly. -->
         <!-- <material>Gazebo/Red</material> -->
           <sensor name="lidar" type="gpu_lidar">
             <always_on>true</always_on>

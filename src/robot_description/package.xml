@@ -16,6 +16,15 @@
   <exec_depend>ros_gz_bridge</exec_depend>
   <exec_depend>gazebo_ros_pkgs</exec_depend>
   <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>slam_toolbox</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>nav2_map_server</exec_depend>
+
+  <!-- REAL/SIM MAPPING DEPENDENCIES TO ADD IF THIS PACKAGE OWNS MAPPING LAUNCHES:
+  <exec_depend>slam_toolbox</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>nav2_map_server</exec_depend>
+  -->
 
 
   <test_depend>ament_lint_auto</test_depend>
